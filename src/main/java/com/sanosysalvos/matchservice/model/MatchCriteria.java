@@ -11,24 +11,24 @@ public class MatchCriteria {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "match_id", nullable = false)
-    private Match match;
+    @JoinColumn(name = "coincidencia_id", nullable = false)
+    private Match coincidencia;
 
-    @Column(name = "criteria_name", length = 50, nullable = false)
-    private String criteriaName;
+    @Column(name = "nombre_criterio", length = 50, nullable = false)
+    private String nombreCriterio;
 
-    @Column
-    private Integer score;
+    @Column(name = "puntaje")
+    private Integer puntaje;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public Match getMatch() { return match; }
-    public void setMatch(Match match) { this.match = match; }
+    public Match getCoincidencia() { return coincidencia; }
+    public void setCoincidencia(Match coincidencia) { this.coincidencia = coincidencia; }
 
-    public String getCriteriaName() { return criteriaName; }
-    public void setCriteriaName(String criteriaName) { this.criteriaName = criteriaName; }
+    public String getNombreCriterio() { return nombreCriterio; }
+    public void setNombreCriterio(String nombreCriterio) { this.nombreCriterio = nombreCriterio; }
 
-    public Integer getScore() { return score; }
-    public void setScore(Integer score) { this.score = score; }
+    public Integer getPuntaje() { return puntaje; }
+    public void setPuntaje(Integer puntaje) { this.puntaje = puntaje; }
 }
