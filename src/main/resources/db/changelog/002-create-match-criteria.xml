@@ -8,11 +8,11 @@
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="match_id" type="BIGINT" nullable="false">
+            <column name="coincidencia_id" type="BIGINT" nullable="false">
                 <constraints foreignKeyName="fk_criteria_match" references="matches(id)" deleteCascade="true"/>
             </column>
-            <column name="criteria_name" type="VARCHAR(50)" nullable="false"/>
-            <column name="score" type="INT"/>
+            <column name="nombre_criterio" type="VARCHAR(50)" nullable="false"/>
+            <column name="puntaje" type="INT"/>
         </createTable>
     </changeSet>
 </databaseChangeLog>

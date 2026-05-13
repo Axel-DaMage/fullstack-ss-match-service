@@ -8,13 +8,15 @@ import java.util.List;
 @Repository
 public interface MatchRepository extends JpaRepository<Match, Long> {
 
-    List<Match> findByStatus(String status);
+    List<Match> findByEstado(String estado);
 
-    List<Match> findByPetLostId(Long petLostId);
+    List<Match> findByMascotaPerdidaId(Long mascotaPerdidaId);
 
-    List<Match> findByPetFoundId(Long petFoundId);
+    List<Match> findByMascotaEncontradaId(Long mascotaEncontradaId);
 
-    List<Match> findByMatchPercentageGreaterThanEqual(Integer percentage);
+    long countByEstado(String estado);
 
-    long countByStatus(String status);
+    List<Match> findByPorcentajeCoincidencia(Integer percentage);
+
+    List<Match> findByPorcentajeCoincidenciaGreaterThanEqual(Integer percentage);
 }
