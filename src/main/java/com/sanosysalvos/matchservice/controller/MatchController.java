@@ -18,6 +18,11 @@ public class MatchController {
         this.matchingService = matchingService;
     }
 
+    @GetMapping("/health")
+    public ResponseEntity<String> health() {
+        return ResponseEntity.ok("Match Service is running");
+    }
+
     @GetMapping
     public ResponseEntity<List<Match>> getAllMatches() {
         return ResponseEntity.ok(matchingService.getAllMatches());
