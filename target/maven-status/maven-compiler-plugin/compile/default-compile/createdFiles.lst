@@ -1,0 +1,3 @@
+com\sanosysalvos\matchservice\controller\MatchController.class
+com\sanosysalvos\matchservice\service\PetServiceConsumer.class
+com\sanosysalvos\matchservice\MatchServiceApplication.class
