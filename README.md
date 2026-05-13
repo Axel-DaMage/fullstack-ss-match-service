@@ -105,3 +105,11 @@ mvn test
 - Permite confirmar o rechazar coincidencias manualmente.
 - Proporciona estadísticas por estado: PENDING, CONFIRMED, REJECTED.
 - Utiliza auditoría automática mediante @PrePersist y @PreUpdate.
+
+---
+
+## Despliegue
+
+Este servicio se despliega automáticamente como parte del repositorio **pet-service** a la instancia **Backend (t3.medium)**.
+
+Ver [Setup Guide](../fullstack-ss-pet-service/README.md#despliegue-en-aws-ec2) para detalles completos de la infraestructura.
