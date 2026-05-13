@@ -12,10 +12,10 @@ public class Match {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "mascota_perdida_id", nullable = false)
+    @Column(name = "id_mascota_perdida", nullable = false)
     private Long mascotaPerdidaId;
 
-    @Column(name = "mascota_encontrada_id", nullable = false)
+    @Column(name = "id_mascota_encontrada", nullable = false)
     private Long mascotaEncontradaId;
 
     @Column(name = "porcentaje_coincidencia")

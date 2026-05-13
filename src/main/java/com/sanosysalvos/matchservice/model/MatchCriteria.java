@@ -11,7 +11,7 @@ public class MatchCriteria {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "coincidencia_id", nullable = false)
+    @JoinColumn(name = "id_coincidencia", nullable = false)
     private Match coincidencia;
 
     @Column(name = "nombre_criterio", length = 50, nullable = false)

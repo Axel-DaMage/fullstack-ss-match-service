@@ -5,4 +5,5 @@
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
     <include file="changelog/001-create-matches.xml"/>
     <include file="changelog/002-create-match-criteria.xml"/>
+    <include file="changelog/003-insert-data.xml"/>
 </databaseChangeLog>

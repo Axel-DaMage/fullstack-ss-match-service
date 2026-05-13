@@ -52,7 +52,7 @@ public class MatchingService {
         Match match = new Match();
         match.setMascotaPerdidaId(petLostId);
         match.setMascotaEncontradaId(petFoundId);
-        match.setEstado("PENDING");
+        match.setEstado("PENDIENTE");
 
         List<MatchCriteria> criteriaList = calculateMatch(petLost, petFound);
         int totalScore = criteriaList.stream().mapToInt(MatchCriteria::getPuntaje).sum();
@@ -90,7 +90,7 @@ public class MatchingService {
         criteriaList.add(colorMatch);
 
         MatchCriteria sizeMatch = new MatchCriteria();
-        sizeMatch.setNombreCriterio("TAMANO");
+        sizeMatch.setNombreCriterio("TAMAÑO");
         if (petLost.getSize() != null && petLost.getSize().equalsIgnoreCase(petFound.getSize())) {
             sizeMatch.setPuntaje(100);
         } else {

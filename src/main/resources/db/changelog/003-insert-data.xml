@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+    <changeSet id="insertar-coincidencias" author="sanosysalvos">
+        <insert tableName="matches">
+            <column name="id_mascota_perdida">1</column>
+            <column name="id_mascota_encontrada">3</column>
+            <column name="porcentaje_coincidencia">85</column>
+            <column name="estado">PENDIENTE</column>
+        </insert>
+        <insert tableName="matches">
+            <column name="id_mascota_perdida">2</column>
+            <column name="id_mascota_encontrada">4</column>
+            <column name="porcentaje_coincidencia">90</column>
+            <column name="estado">CONFIRMADO</column>
+        </insert>
+        <insert tableName="matches">
+            <column name="id_mascota_perdida">5</column>
+            <column name="id_mascota_encontrada">6</column>
+            <column name="porcentaje_coincidencia">75</column>
+            <column name="estado">RECHAZADO</column>
+        </insert>
+        <insert tableName="matches">
+            <column name="id_mascota_perdida">7</column>
+            <column name="id_mascota_encontrada">8</column>
+            <column name="porcentaje_coincidencia">95</column>
+            <column name="estado">PENDIENTE</column>
+        </insert>
+        <insert tableName="matches">
+            <column name="id_mascota_perdida">9</column>
+            <column name="id_mascota_encontrada">10</column>
+            <column name="porcentaje_coincidencia">65</column>
+            <column name="estado">PENDIENTE</column>
+        </insert>
+    </changeSet>
+    <changeSet id="insertar-criterios-coincidencia" author="sanosysalvos">
+        <!-- Criterios para el primer match (ID 1) -->
+        <insert tableName="match_criteria">
+            <column name="id_coincidencia">1</column>
+            <column name="nombre_criterio">Raza</column>
+            <column name="puntaje">100</column>
+        </insert>
+        <insert tableName="match_criteria">
+            <column name="id_coincidencia">1</column>
+            <column name="nombre_criterio">Color</column>
+            <column name="puntaje">80</column>
+        </insert>
+        <insert tableName="match_criteria">
+            <column name="id_coincidencia">1</column>
+            <column name="nombre_criterio">Tamaño</column>
+            <column name="puntaje">75</column>
+        </insert>
+
+        <!-- Criterios para el segundo match (ID 2) -->
+        <insert tableName="match_criteria">
+            <column name="id_coincidencia">2</column>
+            <column name="nombre_criterio">Raza</column>
+            <column name="puntaje">100</column>
+        </insert>
+        <insert tableName="match_criteria">
+            <column name="id_coincidencia">2</column>
+            <column name="nombre_criterio">Color</column>
+            <column name="puntaje">100</column>
+        </insert>
+        <insert tableName="match_criteria">
+            <column name="id_coincidencia">2</column>
+            <column name="nombre_criterio">Tamaño</column>
+            <column name="puntaje">70</column>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

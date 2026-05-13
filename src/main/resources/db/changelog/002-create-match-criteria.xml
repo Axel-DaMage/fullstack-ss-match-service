@@ -3,12 +3,12 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
-    <changeSet id="create-match-criteria-table" author="sanosysalvos">
+    <changeSet id="crear-tabla-criterios-coincidencia" author="sanosysalvos">
         <createTable tableName="match_criteria">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="coincidencia_id" type="BIGINT" nullable="false">
+            <column name="id_coincidencia" type="BIGINT" nullable="false">
                 <constraints foreignKeyName="fk_criteria_match" references="matches(id)" deleteCascade="true"/>
             </column>
             <column name="nombre_criterio" type="VARCHAR(50)" nullable="false"/>

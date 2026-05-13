@@ -3,13 +3,13 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
-    <changeSet id="create-matches-table" author="sanosysalvos">
+    <changeSet id="crear-tabla-coincidencias" author="sanosysalvos">
         <createTable tableName="matches">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="mascota_perdida_id" type="BIGINT" nullable="false"/>
-            <column name="mascota_encontrada_id" type="BIGINT" nullable="false"/>
+            <column name="id_mascota_perdida" type="BIGINT" nullable="false"/>
+            <column name="id_mascota_encontrada" type="BIGINT" nullable="false"/>
             <column name="porcentaje_coincidencia" type="INT"/>
             <column name="estado" type="VARCHAR(20)" nullable="false"/>
             <column name="creado_en" type="TIMESTAMP" nullable="false" defaultValueComputed="CURRENT_TIMESTAMP"/>
