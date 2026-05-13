@@ -8,15 +8,15 @@
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="pet_lost_id" type="BIGINT" nullable="false"/>
-            <column name="pet_found_id" type="BIGINT" nullable="false"/>
-            <column name="match_percentage" type="INT"/>
-            <column name="status" type="VARCHAR(20)" nullable="false"/>
-            <column name="created_at" type="TIMESTAMP" nullable="false" defaultValueComputed="CURRENT_TIMESTAMP"/>
-            <column name="updated_at" type="TIMESTAMP" nullable="false" defaultValueComputed="CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"/>
+            <column name="mascota_perdida_id" type="BIGINT" nullable="false"/>
+            <column name="mascota_encontrada_id" type="BIGINT" nullable="false"/>
+            <column name="porcentaje_coincidencia" type="INT"/>
+            <column name="estado" type="VARCHAR(20)" nullable="false"/>
+            <column name="creado_en" type="TIMESTAMP" nullable="false" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="actualizado_en" type="TIMESTAMP" nullable="false" defaultValueComputed="CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"/>
         </createTable>
-        <addIndex tableName="matches" indexName="idx_match_status">
-            <column name="status"/>
+        <addIndex tableName="matches" indexName="idx_match_estado">
+            <column name="estado"/>
         </addIndex>
     </changeSet>
 </databaseChangeLog>

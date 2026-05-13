@@ -50,18 +50,18 @@ public class MatchingService {
         }
 
         Match match = new Match();
-        match.setPetLostId(petLostId);
-        match.setPetFoundId(petFoundId);
-        match.setStatus("PENDING");
+        match.setMascotaPerdidaId(petLostId);
+        match.setMascotaEncontradaId(petFoundId);
+        match.setEstado("PENDING");
 
         List<MatchCriteria> criteriaList = calculateMatch(petLost, petFound);
-        int totalScore = criteriaList.stream().mapToInt(MatchCriteria::getScore).sum();
-        match.setMatchPercentage(totalScore / criteriaList.size());
+        int totalScore = criteriaList.stream().mapToInt(MatchCriteria::getPuntaje).sum();
+        match.setPorcentajeCoincidencia(totalScore / criteriaList.size());
 
         Match savedMatch = matchRepository.save(match);
 
         for (MatchCriteria criteria : criteriaList) {
-            criteria.setMatch(savedMatch);
+            criteria.setCoincidencia(savedMatch);
         }
         matchCriteriaRepository.saveAll(criteriaList);
 
@@ -72,29 +72,29 @@ public class MatchingService {
         List<MatchCriteria> criteriaList = new ArrayList<>();
 
         MatchCriteria raceMatch = new MatchCriteria();
-        raceMatch.setCriteriaName("RACE");
+        raceMatch.setNombreCriterio("RAZA");
         if (petLost.getRace() != null && petLost.getRace().equalsIgnoreCase(petFound.getRace())) {
-            raceMatch.setScore(100);
+            raceMatch.setPuntaje(100);
         } else {
-            raceMatch.setScore(30);
+            raceMatch.setPuntaje(30);
         }
         criteriaList.add(raceMatch);
 
         MatchCriteria colorMatch = new MatchCriteria();
-        colorMatch.setCriteriaName("COLOR");
+        colorMatch.setNombreCriterio("COLOR");
         if (petLost.getColor() != null && petLost.getColor().equalsIgnoreCase(petFound.getColor())) {
-            colorMatch.setScore(100);
+            colorMatch.setPuntaje(100);
         } else {
-            colorMatch.setScore(40);
+            colorMatch.setPuntaje(40);
         }
         criteriaList.add(colorMatch);
 
         MatchCriteria sizeMatch = new MatchCriteria();
-        sizeMatch.setCriteriaName("SIZE");
+        sizeMatch.setNombreCriterio("TAMANO");
         if (petLost.getSize() != null && petLost.getSize().equalsIgnoreCase(petFound.getSize())) {
-            sizeMatch.setScore(100);
+            sizeMatch.setPuntaje(100);
         } else {
-            sizeMatch.setScore(50);
+            sizeMatch.setPuntaje(50);
         }
         criteriaList.add(sizeMatch);
 
@@ -105,7 +105,7 @@ public class MatchingService {
     public Match updateMatchStatus(Long id, String status) {
         Match match = matchRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Match not found with id: " + id));
-        match.setStatus(status);
+        match.setEstado(status);
         return matchRepository.save(match);
     }
 
@@ -117,15 +117,15 @@ public class MatchingService {
     }
 
     public List<Match> getMatchesByStatus(String status) {
-        return matchRepository.findByStatus(status);
+        return matchRepository.findByEstado(status);
     }
 
     public List<Match> getMatchesByPercentage(Integer percentage) {
-        return matchRepository.findByMatchPercentageGreaterThanEqual(percentage);
+        return matchRepository.findByPorcentajeCoincidenciaGreaterThanEqual(percentage);
     }
 
     public long countMatchesByStatus(String status) {
-        return matchRepository.countByStatus(status);
+        return matchRepository.countByEstado(status);
     }
 
     public LocationDto getLocationByPetId(Long petId) {

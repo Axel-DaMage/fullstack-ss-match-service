@@ -12,59 +12,59 @@ public class Match {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "pet_lost_id", nullable = false)
-    private Long petLostId;
+    @Column(name = "mascota_perdida_id", nullable = false)
+    private Long mascotaPerdidaId;
 
-    @Column(name = "pet_found_id", nullable = false)
-    private Long petFoundId;
+    @Column(name = "mascota_encontrada_id", nullable = false)
+    private Long mascotaEncontradaId;
 
-    @Column(name = "match_percentage")
-    private Integer matchPercentage;
+    @Column(name = "porcentaje_coincidencia")
+    private Integer porcentajeCoincidencia;
 
-    @Column(length = 20, nullable = false)
-    private String status;
+    @Column(name = "estado", length = 20, nullable = false)
+    private String estado;
 
-    @OneToMany(mappedBy = "match", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<MatchCriteria> criteria;
+    @OneToMany(mappedBy = "coincidencia", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<MatchCriteria> criterios;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "creado_en", nullable = false, updatable = false)
+    private LocalDateTime creadoEn;
 
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    @Column(name = "actualizado_en")
+    private LocalDateTime actualizadoEn;
 
     @PrePersist
     protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
+        creadoEn = LocalDateTime.now();
+        actualizadoEn = LocalDateTime.now();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
+        actualizadoEn = LocalDateTime.now();
     }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public Long getPetLostId() { return petLostId; }
-    public void setPetLostId(Long petLostId) { this.petLostId = petLostId; }
+    public Long getMascotaPerdidaId() { return mascotaPerdidaId; }
+    public void setMascotaPerdidaId(Long mascotaPerdidaId) { this.mascotaPerdidaId = mascotaPerdidaId; }
 
-    public Long getPetFoundId() { return petFoundId; }
-    public void setPetFoundId(Long petFoundId) { this.petFoundId = petFoundId; }
+    public Long getMascotaEncontradaId() { return mascotaEncontradaId; }
+    public void setMascotaEncontradaId(Long mascotaEncontradaId) { this.mascotaEncontradaId = mascotaEncontradaId; }
 
-    public Integer getMatchPercentage() { return matchPercentage; }
-    public void setMatchPercentage(Integer matchPercentage) { this.matchPercentage = matchPercentage; }
+    public Integer getPorcentajeCoincidencia() { return porcentajeCoincidencia; }
+    public void setPorcentajeCoincidencia(Integer porcentajeCoincidencia) { this.porcentajeCoincidencia = porcentajeCoincidencia; }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
 
-    public List<MatchCriteria> getCriteria() { return criteria; }
-    public void setCriteria(List<MatchCriteria> criteria) { this.criteria = criteria; }
+    public List<MatchCriteria> getCriterios() { return criterios; }
+    public void setCriterios(List<MatchCriteria> criterios) { this.criterios = criterios; }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public LocalDateTime getCreadoEn() { return creadoEn; }
+    public void setCreadoEn(LocalDateTime creadoEn) { this.creadoEn = creadoEn; }
 
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public LocalDateTime getActualizadoEn() { return actualizadoEn; }
+    public void setActualizadoEn(LocalDateTime actualizadoEn) { this.actualizadoEn = actualizadoEn; }
 }
