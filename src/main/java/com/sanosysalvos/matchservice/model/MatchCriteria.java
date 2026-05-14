@@ -1,5 +1,6 @@
 package com.sanosysalvos.matchservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -23,6 +24,7 @@ public class MatchCriteria {
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
+    @JsonIgnore
     public Match getCoincidencia() { return coincidencia; }
     public void setCoincidencia(Match coincidencia) { this.coincidencia = coincidencia; }
 

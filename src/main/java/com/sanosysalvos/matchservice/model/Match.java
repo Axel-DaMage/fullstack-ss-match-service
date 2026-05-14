@@ -1,5 +1,6 @@
 package com.sanosysalvos.matchservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -59,6 +60,7 @@ public class Match {
     public String getEstado() { return estado; }
     public void setEstado(String estado) { this.estado = estado; }
 
+    @JsonIgnore
     public List<MatchCriteria> getCriterios() { return criterios; }
     public void setCriterios(List<MatchCriteria> criterios) { this.criterios = criterios; }
 
