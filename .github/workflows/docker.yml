@@ -1,23 +1,15 @@
-name: Build and Push Docker Image
+name: Docker Build & Push - Match Service
 
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
-  build-and-push:
+  docker:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Build with Maven
-        run: mvn clean package -DskipTests
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -33,4 +25,8 @@ jobs:
         with:
           context: .
           push: true
-          tags: axeldamage/fullstack-ss-match-service:latest
+          tags: |
+            axeldamage/fullstack-ss-match-service:latest
+            axeldamage/fullstack-ss-match-service:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
