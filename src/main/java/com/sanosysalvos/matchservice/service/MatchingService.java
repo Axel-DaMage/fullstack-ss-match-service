@@ -52,7 +52,7 @@ public class MatchingService {
         Match match = new Match();
         match.setMascotaPerdidaId(petLostId);
         match.setMascotaEncontradaId(petFoundId);
-        match.setEstado("PENDING");
+        match.setEstado("PENDIENTE");
 
         List<MatchCriteria> criteriaList = calculateMatch(petLost, petFound);
         int totalScore = criteriaList.stream().mapToInt(MatchCriteria::getPuntaje).sum();
@@ -138,8 +138,8 @@ public class MatchingService {
     }
 
     public void runAutomaticMatching() {
-        List<PetDto> lostPets = petServiceClient.getPetsByStatus("LOST");
-        List<PetDto> foundPets = petServiceClient.getPetsByStatus("FOUND");
+        List<PetDto> lostPets = petServiceClient.getPetsByStatus("PERDIDO");
+        List<PetDto> foundPets = petServiceClient.getPetsByStatus("ENCONTRADO");
 
         for (PetDto lost : lostPets) {
             for (PetDto found : foundPets) {

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+    <changeSet id="seed-matches" author="sanosysalvos" context="seed">
+        <insert tableName="matches">
+            <column name="mascota_perdida_id" valueNumeric="1"/>
+            <column name="mascota_encontrada_id" valueNumeric="2"/>
+            <column name="porcentaje_coincidencia" valueNumeric="72"/>
+            <column name="estado" value="PENDIENTE"/>
+        </insert>
+        <insert tableName="matches">
+            <column name="mascota_perdida_id" valueNumeric="3"/>
+            <column name="mascota_encontrada_id" valueNumeric="4"/>
+            <column name="porcentaje_coincidencia" valueNumeric="65"/>
+            <column name="estado" value="PENDIENTE"/>
+        </insert>
+        <insert tableName="matches">
+            <column name="mascota_perdida_id" valueNumeric="5"/>
+            <column name="mascota_encontrada_id" valueNumeric="6"/>
+            <column name="porcentaje_coincidencia" valueNumeric="81"/>
+            <column name="estado" value="CONFIRMADO"/>
+        </insert>
+        <insert tableName="matches">
+            <column name="mascota_perdida_id" valueNumeric="7"/>
+            <column name="mascota_encontrada_id" valueNumeric="8"/>
+            <column name="porcentaje_coincidencia" valueNumeric="58"/>
+            <column name="estado" value="PENDIENTE"/>
+        </insert>
+        <insert tableName="matches">
+            <column name="mascota_perdida_id" valueNumeric="9"/>
+            <column name="mascota_encontrada_id" valueNumeric="10"/>
+            <column name="porcentaje_coincidencia" valueNumeric="92"/>
+            <column name="estado" value="CONFIRMADO"/>
+        </insert>
+        <insert tableName="matches">
+            <column name="mascota_perdida_id" valueNumeric="11"/>
+            <column name="mascota_encontrada_id" valueNumeric="12"/>
+            <column name="porcentaje_coincidencia" valueNumeric="49"/>
+            <column name="estado" value="RECHAZADO"/>
+        </insert>
+        <insert tableName="matches">
+            <column name="mascota_perdida_id" valueNumeric="2"/>
+            <column name="mascota_encontrada_id" valueNumeric="5"/>
+            <column name="porcentaje_coincidencia" valueNumeric="67"/>
+            <column name="estado" value="PENDIENTE"/>
+        </insert>
+        <insert tableName="matches">
+            <column name="mascota_perdida_id" valueNumeric="4"/>
+            <column name="mascota_encontrada_id" valueNumeric="9"/>
+            <column name="porcentaje_coincidencia" valueNumeric="74"/>
+            <column name="estado" value="PENDIENTE"/>
+        </insert>
+        <insert tableName="matches">
+            <column name="mascota_perdida_id" valueNumeric="6"/>
+            <column name="mascota_encontrada_id" valueNumeric="1"/>
+            <column name="porcentaje_coincidencia" valueNumeric="62"/>
+            <column name="estado" value="PENDIENTE"/>
+        </insert>
+        <insert tableName="matches">
+            <column name="mascota_perdida_id" valueNumeric="8"/>
+            <column name="mascota_encontrada_id" valueNumeric="3"/>
+            <column name="porcentaje_coincidencia" valueNumeric="88"/>
+            <column name="estado" value="CONFIRMADO"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
