@@ -179,8 +179,8 @@ class MatchingServiceTest {
 
     @Test
     void countMatchesByStatus_ShouldReturnCount() {
-        when(matchRepository.countByEstado("PENDING")).thenReturn(5L);
-        assertEquals(5L, matchingService.countMatchesByStatus("PENDING"));
+when(matchRepository.countByEstado("PENDIENTE")).thenReturn(5L);
+assertEquals(5L, matchingService.countMatchesByStatus("PENDIENTE"));
     }
 
     @Test

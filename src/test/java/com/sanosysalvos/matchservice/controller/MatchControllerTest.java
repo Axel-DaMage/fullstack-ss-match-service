@@ -147,7 +147,7 @@ class MatchControllerTest {
 
     @Test
     void getTotalsByStatus_ShouldReturnCounts() throws Exception {
-        when(matchingService.countMatchesByStatus("PENDING")).thenReturn(5L);
+        when(matchingService.countMatchesByStatus("PENDIENTE")).thenReturn(5L);
         when(matchingService.countMatchesByStatus("CONFIRMED")).thenReturn(3L);
         when(matchingService.countMatchesByStatus("REJECTED")).thenReturn(1L);
 

@@ -82,7 +82,7 @@ public class MatchController {
 
     @GetMapping("/totals/status")
     public ResponseEntity<Map<String, Long>> getTotalsByStatus() {
-        long pendingCount = matchingService.countMatchesByStatus("PENDING");
+        long pendingCount = matchingService.countMatchesByStatus("PENDIENTE");
         long confirmedCount = matchingService.countMatchesByStatus("CONFIRMED");
         long rejectedCount = matchingService.countMatchesByStatus("REJECTED");
         return ResponseEntity.ok(Map.of("pending", pendingCount, "confirmed", confirmedCount, "rejected", rejectedCount));
