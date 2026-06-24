@@ -38,7 +38,7 @@ class MatchingServiceTest {
     }
 
     @Test
-    void createMatch_ShouldCalculate100PercentForIdenticalPets() {
+    void creaMatch100PorcientoMascotasIdenticas() {
         PetDto lostPet = new PetDto();
         lostPet.setId(1L);
         lostPet.setRace("Labrador");
@@ -66,7 +66,7 @@ class MatchingServiceTest {
     }
 
     @Test
-    void createMatch_ShouldCalculate63PercentForPartialMatch() {
+    void creaMatch63PorcientoCoincidenciaParcial() {
         PetDto lostPet = new PetDto();
         lostPet.setId(1L);
         lostPet.setRace("Labrador");
@@ -93,13 +93,13 @@ class MatchingServiceTest {
     }
 
     @Test
-    void createMatch_ShouldThrowWhenPetNotFound() {
+    void creaMatchLanzaExcepcionSiMascotaNoExiste() {
         when(petServiceClient.getPetById(1L)).thenReturn(null);
         assertThrows(RuntimeException.class, () -> matchingService.createMatch(1L, 2L));
     }
 
     @Test
-    void runAutomaticMatching_ShouldCreateMatchesForSimilarPets() {
+    void matchingAutomaticoCreaMatchesSimilares() {
         PetDto lostPet = new PetDto();
         lostPet.setId(1L);
         lostPet.setRace("Labrador");
@@ -124,7 +124,7 @@ class MatchingServiceTest {
     }
 
     @Test
-    void runAutomaticMatching_ShouldNotCreateMatchBelow60() {
+    void matchingAutomaticoNoCreaMatchBajo60() {
         PetDto lostPet = new PetDto();
         lostPet.setId(1L);
         lostPet.setRace("Labrador");

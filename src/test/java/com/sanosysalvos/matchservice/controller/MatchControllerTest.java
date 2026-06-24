@@ -26,7 +26,7 @@ class MatchControllerTest {
     private MatchingService matchingService;
 
     @Test
-    void getMatchById_ShouldReturnMatch() throws Exception {
+    void obtenerMatchRetorna200() throws Exception {
         Match match = new Match();
         match.setId(1L);
         when(matchingService.getMatchById(1L)).thenReturn(Optional.of(match));
@@ -37,14 +37,14 @@ class MatchControllerTest {
     }
 
     @Test
-    void getMatchById_ShouldReturn404WhenNotFound() throws Exception {
+    void obtenerMatchRetorna404() throws Exception {
         when(matchingService.getMatchById(99L)).thenReturn(Optional.empty());
         mockMvc.perform(get("/api/matching/99"))
             .andExpect(status().isNotFound());
     }
 
     @Test
-    void updateMatchStatus_ShouldReturnOk() throws Exception {
+    void actualizarEstadoRetorna200() throws Exception {
         Match match = new Match();
         match.setId(1L);
         match.setEstado("CONFIRMED");
@@ -58,7 +58,7 @@ class MatchControllerTest {
     }
 
     @Test
-    void getTotalsByStatus_ShouldReturnCounts() throws Exception {
+    void totalesPorEstadoRetornaConteos() throws Exception {
         when(matchingService.countMatchesByStatus("PENDIENTE")).thenReturn(5L);
         when(matchingService.countMatchesByStatus("CONFIRMED")).thenReturn(3L);
         when(matchingService.countMatchesByStatus("REJECTED")).thenReturn(1L);
@@ -71,7 +71,7 @@ class MatchControllerTest {
     }
 
     @Test
-    void createMatch_ShouldReturn400WhenMissingIds() throws Exception {
+    void crearMatchRetorna400() throws Exception {
         mockMvc.perform(post("/api/matching")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{}"))
