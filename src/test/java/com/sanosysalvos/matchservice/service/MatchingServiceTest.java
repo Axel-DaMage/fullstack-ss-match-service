@@ -3,7 +3,6 @@ package com.sanosysalvos.matchservice.service;
 import com.sanosysalvos.matchservice.client.LocationServiceClient;
 import com.sanosysalvos.matchservice.client.PetServiceClient;
 import com.sanosysalvos.matchservice.model.Match;
-import com.sanosysalvos.matchservice.model.MatchCriteria;
 import com.sanosysalvos.matchservice.model.PetDto;
 import com.sanosysalvos.matchservice.model.LocationDto;
 import com.sanosysalvos.matchservice.repository.MatchCriteriaRepository;
@@ -11,8 +10,6 @@ import com.sanosysalvos.matchservice.repository.MatchRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -34,9 +31,6 @@ class MatchingServiceTest {
     private PetServiceClient petServiceClient;
     @Mock
     private LocationServiceClient locationServiceClient;
-
-    @Captor
-    private ArgumentCaptor<Match> matchCaptor;
 
     private MatchingService matchingService;
 
@@ -79,21 +73,19 @@ class MatchingServiceTest {
         foundPet.setColor("Marron");
         foundPet.setSize("Grande");
 
-        Match savedMatch = new Match();
-        savedMatch.setId(1L);
-        savedMatch.setMascotaPerdidaId(1L);
-        savedMatch.setMascotaEncontradaId(2L);
-        savedMatch.setPorcentajeCoincidencia(100);
-        savedMatch.setEstado("PENDIENTE");
-
         when(petServiceClient.getPetById(1L)).thenReturn(lostPet);
         when(petServiceClient.getPetById(2L)).thenReturn(foundPet);
-        when(matchRepository.save(any(Match.class))).thenReturn(savedMatch);
+        when(matchRepository.save(any(Match.class))).thenAnswer(i -> {
+            Match m = i.getArgument(0);
+            m.setId(1L);
+            return m;
+        });
         when(matchCriteriaRepository.saveAll(anyList())).thenReturn(List.of());
 
         Match result = matchingService.createMatch(1L, 2L);
         assertEquals(1L, result.getId());
         assertEquals(100, result.getPorcentajeCoincidencia());
+        assertEquals("PENDIENTE", result.getEstado());
         verify(matchCriteriaRepository).saveAll(anyList());
     }
 
@@ -117,17 +109,18 @@ class MatchingServiceTest {
         foundPet.setColor("Marron");
         foundPet.setSize("Grande");
 
-        Match savedMatch = new Match();
-        savedMatch.setId(1L);
-        savedMatch.setPorcentajeCoincidencia(60);
-
         when(petServiceClient.getPetById(1L)).thenReturn(lostPet);
         when(petServiceClient.getPetById(2L)).thenReturn(foundPet);
-        when(matchRepository.save(any(Match.class))).thenReturn(savedMatch);
+        when(matchRepository.save(any(Match.class))).thenAnswer(i -> {
+            Match m = i.getArgument(0);
+            m.setId(1L);
+            return m;
+        });
         when(matchCriteriaRepository.saveAll(anyList())).thenReturn(List.of());
 
         Match result = matchingService.createMatch(1L, 2L);
-        assertEquals(60, result.getPorcentajeCoincidencia());
+        assertEquals(1L, result.getId());
+        assertEquals(63, result.getPorcentajeCoincidencia());
     }
 
     @Test
