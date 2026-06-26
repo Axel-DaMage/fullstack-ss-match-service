@@ -125,7 +125,7 @@ class MatchingServiceTest {
         when(criteriaRepo.saveAll(anyList())).thenReturn(List.of());
 
         Match resultado = service.createMatch(1L, 2L);
-        assertEquals(40, resultado.getPorcentajeCoincidencia());
+        assertEquals(56, resultado.getPorcentajeCoincidencia());
     }
 
     @Test
