@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -22,125 +23,203 @@ import static org.mockito.Mockito.*;
 class MatchingServiceTest {
 
     @Mock
-    private MatchRepository matchRepository;
+    private MatchRepository matchRepo;
     @Mock
-    private MatchCriteriaRepository matchCriteriaRepository;
+    private MatchCriteriaRepository criteriaRepo;
     @Mock
-    private PetServiceClient petServiceClient;
+    private PetServiceClient petClient;
     @Mock
-    private LocationServiceClient locationServiceClient;
+    private LocationServiceClient locationClient;
 
-    private MatchingService matchingService;
+    private MatchingService service;
+
+    private PetDto perdido;
+    private PetDto encontrado;
 
     @BeforeEach
     void setUp() {
-        matchingService = new MatchingService(matchRepository, matchCriteriaRepository, petServiceClient, locationServiceClient);
+        service = new MatchingService(matchRepo, criteriaRepo, petClient, locationClient);
+
+        perdido = new PetDto();
+        perdido.setId(1L);
+        perdido.setRace("Labrador");
+        perdido.setColor("Marron");
+        perdido.setSize("Grande");
+
+        encontrado = new PetDto();
+        encontrado.setId(2L);
+        encontrado.setRace("Labrador");
+        encontrado.setColor("Marron");
+        encontrado.setSize("Grande");
     }
 
     @Test
-    void creaMatch100PorcientoMascotasIdenticas() {
-        PetDto lostPet = new PetDto();
-        lostPet.setId(1L);
-        lostPet.setRace("Labrador");
-        lostPet.setColor("Marron");
-        lostPet.setSize("Grande");
+    void obtenerTodos_DeberiaRetornarLista() {
+        when(matchRepo.findAll()).thenReturn(List.of(new Match()));
+        assertEquals(1, service.getAllMatches().size());
+        verify(matchRepo).findAll();
+    }
 
-        PetDto foundPet = new PetDto();
-        foundPet.setId(2L);
-        foundPet.setRace("Labrador");
-        foundPet.setColor("Marron");
-        foundPet.setSize("Grande");
+    @Test
+    void obtenerPorId_CuandoExiste_DeberiaRetornarMatch() {
+        Match m = new Match();
+        m.setId(1L);
+        when(matchRepo.findById(1L)).thenReturn(Optional.of(m));
 
-        when(petServiceClient.getPetById(1L)).thenReturn(lostPet);
-        when(petServiceClient.getPetById(2L)).thenReturn(foundPet);
-        when(matchRepository.save(any(Match.class))).thenAnswer(i -> {
+        assertTrue(service.getMatchById(1L).isPresent());
+        assertEquals(1L, service.getMatchById(1L).get().getId());
+    }
+
+    @Test
+    void obtenerPorId_CuandoNoExiste_DeberiaRetornarVacio() {
+        when(matchRepo.findById(99L)).thenReturn(Optional.empty());
+        assertTrue(service.getMatchById(99L).isEmpty());
+    }
+
+    @Test
+    void crearMatch100Porciento_MascotasIdenticas() {
+        when(petClient.getPetById(1L)).thenReturn(perdido);
+        when(petClient.getPetById(2L)).thenReturn(encontrado);
+        when(matchRepo.save(any(Match.class))).thenAnswer(i -> {
             Match m = i.getArgument(0);
             m.setId(1L);
             return m;
         });
-        when(matchCriteriaRepository.saveAll(anyList())).thenReturn(List.of());
+        when(criteriaRepo.saveAll(anyList())).thenReturn(List.of());
 
-        Match result = matchingService.createMatch(1L, 2L);
-        assertEquals(100, result.getPorcentajeCoincidencia());
-        assertEquals("PENDIENTE", result.getEstado());
+        Match resultado = service.createMatch(1L, 2L);
+        assertEquals(100, resultado.getPorcentajeCoincidencia());
+        assertEquals("PENDIENTE", resultado.getEstado());
     }
 
     @Test
-    void creaMatch63PorcientoCoincidenciaParcial() {
-        PetDto lostPet = new PetDto();
-        lostPet.setId(1L);
-        lostPet.setRace("Labrador");
-        lostPet.setColor("Negro");
-        lostPet.setSize("Pequeño");
+    void crearMatch63Porciento_CoincidenciaParcial() {
+        encontrado.setColor("Negro");
+        encontrado.setSize("Pequeño");
 
-        PetDto foundPet = new PetDto();
-        foundPet.setId(2L);
-        foundPet.setRace("Labrador");
-        foundPet.setColor("Marron");
-        foundPet.setSize("Grande");
-
-        when(petServiceClient.getPetById(1L)).thenReturn(lostPet);
-        when(petServiceClient.getPetById(2L)).thenReturn(foundPet);
-        when(matchRepository.save(any(Match.class))).thenAnswer(i -> {
+        when(petClient.getPetById(1L)).thenReturn(perdido);
+        when(petClient.getPetById(2L)).thenReturn(encontrado);
+        when(matchRepo.save(any(Match.class))).thenAnswer(i -> {
             Match m = i.getArgument(0);
             m.setId(1L);
             return m;
         });
-        when(matchCriteriaRepository.saveAll(anyList())).thenReturn(List.of());
+        when(criteriaRepo.saveAll(anyList())).thenReturn(List.of());
 
-        Match result = matchingService.createMatch(1L, 2L);
-        assertEquals(63, result.getPorcentajeCoincidencia());
+        Match resultado = service.createMatch(1L, 2L);
+        assertEquals(63, resultado.getPorcentajeCoincidencia());
     }
 
     @Test
-    void creaMatchLanzaExcepcionSiMascotaNoExiste() {
-        when(petServiceClient.getPetById(1L)).thenReturn(null);
-        assertThrows(RuntimeException.class, () -> matchingService.createMatch(1L, 2L));
+    void crearMatch40Porciento_SoloTamanoCoincide() {
+        encontrado.setRace("Pastor");
+        encontrado.setColor("Blanco");
+
+        when(petClient.getPetById(1L)).thenReturn(perdido);
+        when(petClient.getPetById(2L)).thenReturn(encontrado);
+        when(matchRepo.save(any(Match.class))).thenAnswer(i -> {
+            Match m = i.getArgument(0);
+            m.setId(1L);
+            return m;
+        });
+        when(criteriaRepo.saveAll(anyList())).thenReturn(List.of());
+
+        Match resultado = service.createMatch(1L, 2L);
+        assertEquals(40, resultado.getPorcentajeCoincidencia());
     }
 
     @Test
-    void matchingAutomaticoCreaMatchesSimilares() {
-        PetDto lostPet = new PetDto();
-        lostPet.setId(1L);
-        lostPet.setRace("Labrador");
-        lostPet.setColor("Marron");
-        lostPet.setSize("Grande");
-
-        PetDto foundPet = new PetDto();
-        foundPet.setId(2L);
-        foundPet.setRace("Labrador");
-        foundPet.setColor("Marron");
-        foundPet.setSize("Grande");
-
-        when(petServiceClient.getPetsByStatus("PERDIDO")).thenReturn(List.of(lostPet));
-        when(petServiceClient.getPetsByStatus("ENCONTRADO")).thenReturn(List.of(foundPet));
-        when(petServiceClient.getPetById(1L)).thenReturn(lostPet);
-        when(petServiceClient.getPetById(2L)).thenReturn(foundPet);
-        when(matchRepository.save(any(Match.class))).thenReturn(new Match());
-        when(matchCriteriaRepository.saveAll(anyList())).thenReturn(List.of());
-
-        matchingService.runAutomaticMatching();
-        verify(matchRepository, atLeastOnce()).save(any(Match.class));
+    void crearMatch_LanzaExcepcionSiMascotaNoExiste() {
+        when(petClient.getPetById(1L)).thenReturn(null);
+        assertThrows(RuntimeException.class, () -> service.createMatch(1L, 2L));
     }
 
     @Test
-    void matchingAutomaticoNoCreaMatchBajo60() {
-        PetDto lostPet = new PetDto();
-        lostPet.setId(1L);
-        lostPet.setRace("Labrador");
-        lostPet.setColor("Negro");
-        lostPet.setSize("Pequeño");
+    void actualizarEstado_CuandoExiste_DeberiaCambiarEstado() {
+        Match existente = new Match();
+        existente.setId(1L);
+        existente.setEstado("PENDIENTE");
+        when(matchRepo.findById(1L)).thenReturn(Optional.of(existente));
+        when(matchRepo.save(any(Match.class))).thenAnswer(i -> i.getArgument(0));
 
-        PetDto foundPet = new PetDto();
-        foundPet.setId(2L);
-        foundPet.setRace("Pastor");
-        foundPet.setColor("Blanco");
-        foundPet.setSize("Grande");
+        Match resultado = service.updateMatchStatus(1L, "CONFIRMED");
+        assertEquals("CONFIRMED", resultado.getEstado());
+    }
 
-        when(petServiceClient.getPetsByStatus("PERDIDO")).thenReturn(List.of(lostPet));
-        when(petServiceClient.getPetsByStatus("ENCONTRADO")).thenReturn(List.of(foundPet));
+    @Test
+    void actualizarEstado_CuandoNoExiste_DeberiaLanzarExcepcion() {
+        when(matchRepo.findById(99L)).thenReturn(Optional.empty());
+        assertThrows(RuntimeException.class, () -> service.updateMatchStatus(99L, "CONFIRMED"));
+    }
 
-        matchingService.runAutomaticMatching();
-        verify(matchRepository, never()).save(any(Match.class));
+    @Test
+    void eliminarMatch_CuandoExiste_DeberiaEliminar() {
+        Match m = new Match();
+        m.setId(1L);
+        when(matchRepo.findById(1L)).thenReturn(Optional.of(m));
+
+        service.deleteMatch(1L);
+        verify(matchRepo).delete(m);
+    }
+
+    @Test
+    void eliminarMatch_CuandoNoExiste_DeberiaLanzarExcepcion() {
+        when(matchRepo.findById(99L)).thenReturn(Optional.empty());
+        assertThrows(RuntimeException.class, () -> service.deleteMatch(99L));
+    }
+
+    @Test
+    void buscarPorEstado_DeberiaRetornarFiltrados() {
+        when(matchRepo.findByEstado("PENDIENTE")).thenReturn(List.of(new Match()));
+        assertEquals(1, service.getMatchesByStatus("PENDIENTE").size());
+        verify(matchRepo).findByEstado("PENDIENTE");
+    }
+
+    @Test
+    void buscarPorPorcentaje_DeberiaRetornarFiltrados() {
+        when(matchRepo.findByPorcentajeCoincidenciaGreaterThanEqual(80)).thenReturn(List.of(new Match()));
+        assertEquals(1, service.getMatchesByPercentage(80).size());
+        verify(matchRepo).findByPorcentajeCoincidenciaGreaterThanEqual(80);
+    }
+
+    @Test
+    void contarPorEstado_DeberiaRetornarCantidad() {
+        when(matchRepo.countByEstado("PENDIENTE")).thenReturn(3L);
+        assertEquals(3L, service.countMatchesByStatus("PENDIENTE"));
+    }
+
+    @Test
+    void matchingAutomatico_CreaMatchesSimilares() {
+        when(petClient.getPetsByStatus("PERDIDO")).thenReturn(List.of(perdido));
+        when(petClient.getPetsByStatus("ENCONTRADO")).thenReturn(List.of(encontrado));
+        when(petClient.getPetById(1L)).thenReturn(perdido);
+        when(petClient.getPetById(2L)).thenReturn(encontrado);
+        when(matchRepo.save(any(Match.class))).thenReturn(new Match());
+        when(criteriaRepo.saveAll(anyList())).thenReturn(List.of());
+
+        service.runAutomaticMatching();
+        verify(matchRepo, atLeastOnce()).save(any(Match.class));
+    }
+
+    @Test
+    void matchingAutomatico_NoCreaMatchBajo60() {
+        encontrado.setRace("Pastor");
+        encontrado.setColor("Blanco");
+        encontrado.setSize("Pequeño");
+
+        when(petClient.getPetsByStatus("PERDIDO")).thenReturn(List.of(perdido));
+        when(petClient.getPetsByStatus("ENCONTRADO")).thenReturn(List.of(encontrado));
+
+        service.runAutomaticMatching();
+        verify(matchRepo, never()).save(any(Match.class));
+    }
+
+    @Test
+    void matchingAutomatico_SinMascotas_NoHaceNada() {
+        when(petClient.getPetsByStatus("PERDIDO")).thenReturn(List.of());
+        when(petClient.getPetsByStatus("ENCONTRADO")).thenReturn(List.of());
+
+        service.runAutomaticMatching();
+        verify(matchRepo, never()).save(any());
     }
 }
