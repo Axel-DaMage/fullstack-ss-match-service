@@ -8,5 +8,5 @@ import java.util.List;
 @Repository
 public interface MatchCriteriaRepository extends JpaRepository<MatchCriteria, Long> {
 
-    List<MatchCriteria> findByCoincidenciaId(Long coincidenciaId);
+    List<MatchCriteria> findByMatchId(Long matchId);
 }

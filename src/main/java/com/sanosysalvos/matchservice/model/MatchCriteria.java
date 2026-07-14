@@ -1,6 +1,5 @@
 package com.sanosysalvos.matchservice.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -12,7 +11,7 @@ public class MatchCriteria {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "coincidencia_id", nullable = false)
+    @JoinColumn(name = "id_coincidencia", nullable = false)
     private Match coincidencia;
 
     @Column(name = "nombre_criterio", length = 50, nullable = false)
@@ -24,7 +23,6 @@ public class MatchCriteria {
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    @JsonIgnore
     public Match getCoincidencia() { return coincidencia; }
     public void setCoincidencia(Match coincidencia) { this.coincidencia = coincidencia; }
 

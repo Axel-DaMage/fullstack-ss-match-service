@@ -1,94 +1,115 @@
 # Match Service
 
-[![Docker](https://github.com/Axel-DaMage/fullstack-ss-match-service/actions/workflows/docker.yml/badge.svg)](https://github.com/Axel-DaMage/fullstack-ss-match-service/actions/workflows/docker.yml)
-![Java](https://img.shields.io/badge/java-17-orange)
-![Spring Boot](https://img.shields.io/badge/spring%20boot-3.1.2-brightgreen)
+Microservicio de matching para el proyecto **Sanos y Salvos**. Encargado de encontrar coincidencias potenciales entre mascotas perdidas y encontradas basándose en criterios de similitud.
 
-Microservicio para el algoritmo de coincidencias entre mascotas perdidas y encontradas. Calcula porcentajes de similitud basados en raza, color y tamano.
+## Objetivo
 
-## Stack
+El Match Service proporciona una API REST para crear y gestionar coincidencias entre mascotas reportadas como perdidas y encontradas. Utiliza algoritmos de comparación por raza, color y tamaño para calcular un porcentaje de coincidencia y facilitar la reunificación de mascotas con sus dueños.
 
-- Java 17, Spring Boot 3.1.2
-- Spring Data JPA, Hibernate, Liquibase, MySQL
-- Eureka Discovery Client
-- Maven, JaCoCo
-- Docker multi-stage
-- Resilience4j Circuit Breaker (cliente HTTP)
+## Arquitectura
 
-## Patrones de Diseno
+### Patrón Matching
+El servicio implementa lógica de comparación para determinar posibles matches entre mascotas:
 
-| Patron | Tipo | Donde |
-|--------|------|-------|
-| **Strategy** | GoF | `calculateMatch()` (pesos por atributo) vs `calculateSimpleMatch()` (peso plano) en `MatchingService` |
-| **Singleton** | GoF | `AppConfig` — configuracion global con `minMatchPercentage` y `autoMatchingEnabled` |
-| **Template Method** | GoF | Entidades JPA con `@PrePersist`/`@PreUpdate` para timestamps |
-| **Circuit Breaker** | Cloud | Resilience4j en `PetServiceConsumer` — falla graceful ante caida de pet-service |
-| **Proxy** | Spring AOP | `@Transactional` + `RestTemplate` clients |
-| **DTO** | GoF | `PetDto`, `LocationDto` para comunicacion entre servicios |
+```
+Pet Service → Pet Service Client → Match Service
+Geo Service → Location Service Client → Match Service → Matching Service
+```
 
-## Algoritmo de Matching
+### Componentes
 
-El servicio implementa dos estrategias de calculo de similitud:
-
-**calculateMatch (ponderado):**
-- Raza: 40% del puntaje total
-- Color: 30% del puntaje total
-- Tamano: 30% del puntaje total
-
-**calculateSimpleMatch (plano):**
-- Cada atributo (raza, color, tamano) tiene igual peso (33.3%)
-
-Ambos devuelven un porcentaje de 0 a 100. `runAutomaticMatching()` aplica el algoritmo simple contra todos los pares perdido/encontrado.
+- [MatchController](src/main/java/com/sanosysalvos/matchservice/controller/MatchController.java): Endpoints REST principales
+- [MatchingService](src/main/java/com/sanosysalvos/matchservice/service/MatchingService.java): Lógica de matching y algoritmos de comparación
+- [PetServiceConsumer](src/main/java/com/sanosysalvos/matchservice/service/PetServiceConsumer.java): Consumidor de servicios de mascotas
+- [MatchRepository](src/main/java/com/sanosysalvos/matchservice/repository/MatchRepository.java): Repositorio JPA para coincidencias
+- [MatchCriteriaRepository](src/main/java/com/sanosysalvos/matchservice/repository/MatchCriteriaRepository.java): Repositorio para criterios de matching
+- [PetServiceClient](src/main/java/com/sanosysalvos/matchservice/client/PetServiceClient.java): Cliente HTTP para Pet Service
+- [LocationServiceClient](src/main/java/com/sanosysalvos/matchservice/client/LocationServiceClient.java): Cliente HTTP para Geo Service
+- [Match](src/main/java/com/sanosysalvos/matchservice/model/Match.java): Modelo de entidad coincidencia
+- [MatchCriteria](src/main/java/com/sanosysalvos/matchservice/model/MatchCriteria.java): Modelo de criterios de comparación
+- [PetDto](src/main/java/com/sanosysalvos/matchservice/model/PetDto.java): DTO de mascota
+- [LocationDto](src/main/java/com/sanosysalvos/matchservice/model/LocationDto.java): DTO de ubicación
 
 ## Endpoints
 
-| Metodo | Ruta | Descripcion |
-|--------|------|-------------|
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
 | GET | `/api/matching` | Listar todas las coincidencias |
-| GET | `/api/matching/{id}` | Obtener por ID |
-| POST | `/api/matching` | Crear coincidencia |
-| PUT | `/api/matching/{id}` | Actualizar estado |
-| DELETE | `/api/matching/{id}` | Eliminar |
-| GET | `/api/matching/search/status/{status}` | Buscar por estado |
-| GET | `/api/matching/search/percentage/{percentage}` | Buscar por % minimo |
-| GET | `/api/matching/totals/status` | Totales por estado |
-| POST | `/api/matching/run-automatic` | Matching automatico |
-| GET | `/health` | Health check |
+| GET | `/api/matching/{id}` | Obtener coincidencia por ID |
+| POST | `/api/matching` | Crear nueva coincidencia |
+| PUT | `/api/matching/{id}` | Actualizar estado de coincidencia |
+| DELETE | `/api/matching/{id}` | Eliminar coincidencia |
+| GET | `/api/matching/search/status/{status}` | Buscar coincidencias por estado |
+| GET | `/api/matching/search/percentage/{percentage}` | Buscar por porcentaje mínimo |
+| GET | `/api/matching/totals/status` | Contar coincidencias por estado |
+| POST | `/api/matching/run-automatic` | Ejecutar matching automático |
+| GET | `/health` | Verificar estado del servicio |
 
-## Base de Datos
+## Algoritmo de Matching
 
-MySQL `match_service` con tablas: `matches`, `match_criteria`. Migraciones Liquibase en XML.
+El servicio calcula el porcentaje de coincidencia basándose en tres criterios:
 
-**Entidades:**
-- `Match` → `matches` (id, mascotaPerdidaId, mascotaEncontradaId, porcentajeCoincidencia, status, fechaCreacion) — `@OneToMany` → MatchCriteria
-- `MatchCriteria` → `match_criteria` (id, nombreCriterio, puntaje) — `@ManyToOne` → Match
+1. **Raza**: Coincidencia exacta = 100 puntos, diferente = 30 puntos
+2. **Color**: Coincidencia exacta = 100 puntos, diferente = 40 puntos
+3. **Tamaño**: Coincidencia exacta = 100 puntos, diferente = 50 puntos
+
+El porcentaje final se calcula como el promedio de los scores obtenidos.
+
+## Tecnologías
+
+- Java 17
+- Spring Boot 3
+- Spring Web (REST)
+- Spring Data JPA
+- Liquibase
+- MySQL
+- Maven
+
+## Configuración
+
+```properties
+# Puerto del servicio
+server.port=3003
+
+# Base de datos
+spring.datasource.url=jdbc:mysql://localhost:3306/match_service
+spring.datasource.username=root
+spring.datasource.password=password
+
+# URLs de servicios externos
+pet.service.url=http://pet-service:3001
+geo.service.url=http://geo-service:3002
+
+# Liquibase
+spring.liquibase.enabled=true
+```
+
+## Instalación
+
+```bash
+mvn clean install
+mvn spring-boot:run
+```
 
 ## Pruebas
 
 ```bash
-mvn clean test
-mvn clean verify
+mvn test
 ```
 
-32 tests en 2 archivos: `MatchingServiceTest`, `MatchControllerTest`.
+## Notas
 
-## Docker
+- El servicio consume datos de Pet Service y Geo Service para realizar el matching.
+- Implementa matching automático que compara todas las mascotas perdidas con las encontradas.
+- Solo crea coincidencias con porcentaje mayor o igual al 60% en matching automático.
+- Permite confirmar o rechazar coincidencias manualmente.
+- Proporciona estadísticas por estado: PENDIENTE, CONFIRMADO, RECHAZADO.
+- Utiliza auditoría automática mediante @PrePersist y @PreUpdate.
 
-```bash
-docker build -t d4mag3/match-service .
-docker run -p 3003:3003 d4mag3/match-service
-```
+---
 
-Imagen disponible en: `d4mag3/match-service:latest`
+## Despliegue
 
-## Variables de Entorno
+Este servicio se despliega automáticamente como parte del repositorio **match-service** a la instancia **Backend (t3.medium)**.
 
-| Variable | Default | Descripcion |
-|----------|---------|-------------|
-| `SERVER_PORT` | 3003 | Puerto del servicio |
-| `DB_URL` | `jdbc:mysql://db-match:3306/match_service` | URL de base de datos |
-| `DB_USER` | user | Usuario MySQL |
-| `DB_PASSWORD` | password | Password MySQL |
-| `PET_SERVICE_URL` | `http://pet-service:3001` | URL de pet-service |
-| `GEO_SERVICE_URL` | `http://geo-service:3002` | URL de geo-service |
-| `EUREKA_URL` | `http://eureka-server:8761/eureka/` | URL de Eureka |
+Ver [Setup Guide](../fullstack-ss-pet-service/README.md#despliegue-en-aws-ec2) para detalles completos de la infraestructura.

@@ -3,7 +3,7 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
-    <include file="classpath:db/changelog/001-create-matches.xml"/>
-    <include file="classpath:db/changelog/002-create-match-criteria.xml"/>
-    <include file="classpath:db/changelog/003-seed-matches.xml"/>
+    <include file="changelog/001-create-matches.xml"/>
+    <include file="changelog/002-create-match-criteria.xml"/>
+    <include file="changelog/003-insert-data.xml"/>
 </databaseChangeLog>

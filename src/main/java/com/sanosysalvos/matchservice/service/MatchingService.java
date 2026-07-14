@@ -90,7 +90,7 @@ public class MatchingService {
         criteriaList.add(colorMatch);
 
         MatchCriteria sizeMatch = new MatchCriteria();
-        sizeMatch.setNombreCriterio("TAMANO");
+        sizeMatch.setNombreCriterio("TAMAÑO");
         if (petLost.getSize() != null && petLost.getSize().equalsIgnoreCase(petFound.getSize())) {
             sizeMatch.setPuntaje(100);
         } else {
@@ -138,8 +138,8 @@ public class MatchingService {
     }
 
     public void runAutomaticMatching() {
-        List<PetDto> lostPets = petServiceClient.getPetsByStatus("PERDIDO");
-        List<PetDto> foundPets = petServiceClient.getPetsByStatus("ENCONTRADO");
+        List<PetDto> lostPets = petServiceClient.getPetsByStatus("LOST");
+        List<PetDto> foundPets = petServiceClient.getPetsByStatus("FOUND");
 
         for (PetDto lost : lostPets) {
             for (PetDto found : foundPets) {
