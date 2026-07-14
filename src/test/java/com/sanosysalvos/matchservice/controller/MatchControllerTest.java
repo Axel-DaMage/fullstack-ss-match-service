@@ -159,14 +159,14 @@ class MatchControllerTest {
     @Test
     void totalesPorEstado_DeberiaRetornarConteos() throws Exception {
         when(serviceMock.countMatchesByStatus("PENDIENTE")).thenReturn(5L);
-        when(serviceMock.countMatchesByStatus("CONFIRMED")).thenReturn(3L);
-        when(serviceMock.countMatchesByStatus("REJECTED")).thenReturn(1L);
+        when(serviceMock.countMatchesByStatus("CONFIRMADO")).thenReturn(3L);
+        when(serviceMock.countMatchesByStatus("RECHAZADO")).thenReturn(1L);
 
         mvc.perform(get("/api/matching/totals/status"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.pending").value(5))
-                .andExpect(jsonPath("$.confirmed").value(3))
-                .andExpect(jsonPath("$.rejected").value(1));
+                .andExpect(jsonPath("$.pendiente").value(5))
+                .andExpect(jsonPath("$.confirmado").value(3))
+                .andExpect(jsonPath("$.rechazado").value(1));
     }
 
     @Test

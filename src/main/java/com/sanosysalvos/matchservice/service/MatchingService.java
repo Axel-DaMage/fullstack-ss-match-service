@@ -8,9 +8,9 @@ import com.sanosysalvos.matchservice.model.PetDto;
 import com.sanosysalvos.matchservice.model.LocationDto;
 import com.sanosysalvos.matchservice.repository.MatchCriteriaRepository;
 import com.sanosysalvos.matchservice.repository.MatchRepository;
+import com.sanosysalvos.matchservice.strategy.MatchingStrategy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,15 +21,18 @@ public class MatchingService {
     private final MatchCriteriaRepository matchCriteriaRepository;
     private final PetServiceClient petServiceClient;
     private final LocationServiceClient locationServiceClient;
+    private final MatchingStrategy matchingStrategy;
 
     public MatchingService(MatchRepository matchRepository,
                           MatchCriteriaRepository matchCriteriaRepository,
                           PetServiceClient petServiceClient,
-                          LocationServiceClient locationServiceClient) {
+                          LocationServiceClient locationServiceClient,
+                          MatchingStrategy matchingStrategy) {
         this.matchRepository = matchRepository;
         this.matchCriteriaRepository = matchCriteriaRepository;
         this.petServiceClient = petServiceClient;
         this.locationServiceClient = locationServiceClient;
+        this.matchingStrategy = matchingStrategy;
     }
 
     public List<Match> getAllMatches() {
@@ -54,7 +57,7 @@ public class MatchingService {
         match.setMascotaEncontradaId(petFoundId);
         match.setEstado("PENDIENTE");
 
-        List<MatchCriteria> criteriaList = calculateMatch(petLost, petFound);
+        List<MatchCriteria> criteriaList = matchingStrategy.calculate(petLost, petFound);
         int totalScore = criteriaList.stream().mapToInt(MatchCriteria::getPuntaje).sum();
         match.setPorcentajeCoincidencia(totalScore / criteriaList.size());
 
@@ -66,39 +69,6 @@ public class MatchingService {
         matchCriteriaRepository.saveAll(criteriaList);
 
         return savedMatch;
-    }
-
-    private List<MatchCriteria> calculateMatch(PetDto petLost, PetDto petFound) {
-        List<MatchCriteria> criteriaList = new ArrayList<>();
-
-        MatchCriteria raceMatch = new MatchCriteria();
-        raceMatch.setNombreCriterio("RAZA");
-        if (petLost.getRace() != null && petLost.getRace().equalsIgnoreCase(petFound.getRace())) {
-            raceMatch.setPuntaje(100);
-        } else {
-            raceMatch.setPuntaje(30);
-        }
-        criteriaList.add(raceMatch);
-
-        MatchCriteria colorMatch = new MatchCriteria();
-        colorMatch.setNombreCriterio("COLOR");
-        if (petLost.getColor() != null && petLost.getColor().equalsIgnoreCase(petFound.getColor())) {
-            colorMatch.setPuntaje(100);
-        } else {
-            colorMatch.setPuntaje(40);
-        }
-        criteriaList.add(colorMatch);
-
-        MatchCriteria sizeMatch = new MatchCriteria();
-        sizeMatch.setNombreCriterio("TAMAÑO");
-        if (petLost.getSize() != null && petLost.getSize().equalsIgnoreCase(petFound.getSize())) {
-            sizeMatch.setPuntaje(100);
-        } else {
-            sizeMatch.setPuntaje(50);
-        }
-        criteriaList.add(sizeMatch);
-
-        return criteriaList;
     }
 
     @Transactional
@@ -143,7 +113,7 @@ public class MatchingService {
 
         for (PetDto lost : lostPets) {
             for (PetDto found : foundPets) {
-                int percentage = calculateSimpleMatch(lost, found);
+                int percentage = matchingStrategy.calculateSimple(lost, found);
                 if (percentage >= 60) {
                     createMatch(lost.getId(), found.getId());
                 }
@@ -151,25 +121,4 @@ public class MatchingService {
         }
     }
 
-    private int calculateSimpleMatch(PetDto pet1, PetDto pet2) {
-        int score = 0;
-        int factors = 0;
-
-        if (pet1.getRace() != null && pet1.getRace().equalsIgnoreCase(pet2.getRace())) {
-            score += 33;
-        }
-        factors++;
-
-        if (pet1.getColor() != null && pet1.getColor().equalsIgnoreCase(pet2.getColor())) {
-            score += 33;
-        }
-        factors++;
-
-        if (pet1.getSize() != null && pet1.getSize().equalsIgnoreCase(pet2.getSize())) {
-            score += 34;
-        }
-        factors++;
-
-        return factors > 0 ? score : 0;
-    }
 }

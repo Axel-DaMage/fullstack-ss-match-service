@@ -6,6 +6,8 @@ import com.sanosysalvos.matchservice.model.Match;
 import com.sanosysalvos.matchservice.model.PetDto;
 import com.sanosysalvos.matchservice.repository.MatchCriteriaRepository;
 import com.sanosysalvos.matchservice.repository.MatchRepository;
+import com.sanosysalvos.matchservice.strategy.MatchingStrategy;
+import com.sanosysalvos.matchservice.strategy.WeightedMatchingStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +33,8 @@ class MatchingServiceTest {
     @Mock
     private LocationServiceClient locationClient;
 
+    private final MatchingStrategy matchingStrategy = new WeightedMatchingStrategy();
+
     private MatchingService service;
 
     private PetDto perdido;
@@ -38,7 +42,7 @@ class MatchingServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new MatchingService(matchRepo, criteriaRepo, petClient, locationClient);
+        service = new MatchingService(matchRepo, criteriaRepo, petClient, locationClient, matchingStrategy);
 
         perdido = new PetDto();
         perdido.setId(1L);
@@ -190,8 +194,8 @@ class MatchingServiceTest {
 
     @Test
     void matchingAutomatico_CreaMatchesSimilares() {
-        when(petClient.getPetsByStatus("PERDIDO")).thenReturn(List.of(perdido));
-        when(petClient.getPetsByStatus("ENCONTRADO")).thenReturn(List.of(encontrado));
+        when(petClient.getPetsByStatus("LOST")).thenReturn(List.of(perdido));
+        when(petClient.getPetsByStatus("FOUND")).thenReturn(List.of(encontrado));
         when(petClient.getPetById(1L)).thenReturn(perdido);
         when(petClient.getPetById(2L)).thenReturn(encontrado);
         when(matchRepo.save(any(Match.class))).thenReturn(new Match());
@@ -207,8 +211,8 @@ class MatchingServiceTest {
         encontrado.setColor("Blanco");
         encontrado.setSize("Pequeño");
 
-        when(petClient.getPetsByStatus("PERDIDO")).thenReturn(List.of(perdido));
-        when(petClient.getPetsByStatus("ENCONTRADO")).thenReturn(List.of(encontrado));
+        when(petClient.getPetsByStatus("LOST")).thenReturn(List.of(perdido));
+        when(petClient.getPetsByStatus("FOUND")).thenReturn(List.of(encontrado));
 
         service.runAutomaticMatching();
         verify(matchRepo, never()).save(any(Match.class));
@@ -216,8 +220,8 @@ class MatchingServiceTest {
 
     @Test
     void matchingAutomatico_SinMascotas_NoHaceNada() {
-        when(petClient.getPetsByStatus("PERDIDO")).thenReturn(List.of());
-        when(petClient.getPetsByStatus("ENCONTRADO")).thenReturn(List.of());
+        when(petClient.getPetsByStatus("LOST")).thenReturn(List.of());
+        when(petClient.getPetsByStatus("FOUND")).thenReturn(List.of());
 
         service.runAutomaticMatching();
         verify(matchRepo, never()).save(any());
